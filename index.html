@@ -48,6 +48,7 @@ main{flex:1;min-width:0}
 .empty{border:1px dashed var(--bd);border-radius:8px;padding:40px;text-align:center;color:var(--mut)}
 .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .bar select{width:auto}
+.notes{margin-bottom:18px}.notes textarea{width:100%;min-height:110px;margin-top:4px;resize:vertical;background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:10px;font:inherit}.notes textarea:focus{outline:2px solid var(--mut);outline-offset:-1px}
 dialog{background:var(--bg2);color:var(--fg);border:1px solid var(--bd);border-radius:10px;padding:20px;width:min(380px,92vw)}
 dialog::backdrop{background:#000a}
 dialog h3{margin:0 0 12px}
@@ -58,10 +59,41 @@ dialog label input,dialog label select{margin-top:4px}
 #lb img,#lb video{max-width:100%;max-height:100%;border-radius:6px}
 .foot{margin-top:28px;color:var(--mut);font-size:12px}
 @media(max-width:700px){.wrap{flex-direction:column;padding:14px;gap:14px}aside{width:100%;display:flex;gap:6px;overflow-x:auto;align-items:center}aside h4{display:none}.cat{border:1px solid var(--bd);white-space:nowrap;gap:8px}.add{margin:0;width:auto;white-space:nowrap}}
+:root:not([data-theme="light"]){--bg:#0a0a0a;--bg2:#121212;--bg3:#1c1c1c;--bd:#2a2a2a;--mut:#9b9b9b;--sh:0 10px 30px #000a}
+:root[data-theme="light"]{--bg:#f4f4f4;--bg2:#fff;--bg3:#ececec;--bd:#e0e0e0;--mut:#6b6b6b;--sh:0 10px 28px #0001}
+body{font-family:Inter,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;background:radial-gradient(900px 420px at 50% -120px,var(--bg3),var(--bg) 70%) no-repeat fixed,var(--bg);-webkit-font-smoothing:antialiased}
+header{backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 82%,transparent);padding:14px 24px}
+header b{display:flex;gap:10px;align-items:center;font-size:17px;letter-spacing:-.02em}
+.lg{width:22px;height:22px;border-radius:7px;display:block;background:linear-gradient(135deg,var(--fg),var(--mut))}
+input,select{border-radius:10px}
+header input{border-radius:999px;padding:8px 16px;background:var(--bg2)}
+button{border-radius:999px;transition:.15s}button:hover{transform:translateY(-1px)}button.pr:hover{opacity:.88}
+.cat{border-radius:10px;transition:.15s;align-items:center}
+.cat span{font-size:11px;background:var(--bg3);color:var(--mut);border-radius:999px;padding:0 8px}
+.cat.on{background:var(--fg);color:var(--bg)}.cat.on span{background:#8884;color:inherit}
+.top h2{font-size:28px;letter-spacing:-.03em}
+.grid{gap:16px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.card{border-radius:16px;padding:22px 16px;text-align:center;transition:.2s;animation:up .35s both}
+.card:hover{transform:translateY(-4px);box-shadow:var(--sh);border-color:var(--mut)}
+.av{width:64px;height:64px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;font-weight:700;font-size:22px;background:linear-gradient(145deg,var(--fg),var(--mut));color:var(--bg)}
+.av.big{width:72px;height:72px;margin:0;font-size:26px}
+.hd{display:flex;gap:16px;align-items:center}.hd h2{margin-bottom:4px}
+.tag{background:var(--bg3)}
+.tile{border-radius:14px;transition:.2s;animation:up .35s both}
+.tile img,.tile video{transition:transform .3s}.tile:hover img,.tile:hover video{transform:scale(1.06)}.tile:hover{box-shadow:var(--sh)}
+.tile .x{border-radius:999px;background:#000a;color:#fff;border:0;opacity:0;transition:.15s}.tile:hover .x{opacity:1}
+@media(hover:none){.tile .x{opacity:1}}
+.empty{border-radius:16px;padding:56px 20px;background:var(--bg2)}
+.notes textarea{background:var(--bg2);border-radius:12px;padding:14px}
+dialog{border-radius:16px;box-shadow:var(--sh)}dialog::backdrop{backdrop-filter:blur(4px)}
+#lb{backdrop-filter:blur(8px)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:10px}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr);gap:12px}header{padding:12px 14px}.top h2{font-size:22px}.hd{gap:12px}.av.big{width:56px;height:56px;font-size:20px}}
 </style>
 </head>
 <body>
-<header><b>◼ Mon Cercle</b><input id="q" placeholder="Rechercher une personne…"><button id="th" title="Thème">◐</button></header>
+<header><b><i class="lg"></i>Mon Cercle</b><input id="q" placeholder="Rechercher une personne…"><button id="th" title="Thème">◐</button></header>
 <div class="wrap"><aside id="side"></aside><main id="main"></main></div>
 <dialog id="dlg"></dialog>
 <div id="lb"></div>
@@ -90,7 +122,7 @@ function ask(title,fields,ok,cb,msg){
   $("#ok").onclick=()=>{const v={};fields.forEach(f=>v[f.id]=$("#f_"+f.id).value.trim());if(fields.some(f=>f.req&&!v[f.id]))return;d.close();cb(v)};
   const i=d.querySelector("input");if(i)i.focus();
 }
-const name=p=>`${p.prenom} ${p.nom}`.trim();
+const name=p=>`${p.prenom} ${p.nom}`.trim();const ini=p=>esc((((p.prenom||"")[0]||"")+((p.nom||"")[0]||"")).toUpperCase());
 
 async function render(){
   urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
@@ -105,21 +137,22 @@ function side(){
   $("#ac").onclick=()=>ask("Nouvelle catégorie",[{id:"n",l:"Nom",req:1}],"Créer",v=>{if(!cats.includes(v.n)&&v.n!=="Tous"){cats.push(v.n);saveCats()}cat=v.n;cur=null;render()});
 }
 async function home(){
-  const list=people.filter(p=>(cat==="Tous"||p.cat===cat)&&name(p).toLowerCase().includes(q)).sort((a,b)=>name(a).localeCompare(name(b)));
+  const list=people.filter(p=>(cat==="Tous"||p.cat===cat)&&(name(p)+" "+(p.notes||"")).toLowerCase().includes(q)).sort((a,b)=>name(a).localeCompare(name(b)));
   const counts=await Promise.all(list.map(p=>cnt(p.id)));
-  $("#main").innerHTML=`<div class="top"><h2>${esc(cat)}</h2><button class="pr" id="np">+ Nouvelle personne</button></div>`+(list.length?`<div class="grid">${list.map((p,i)=>`<div class="card" data-id="${p.id}"><svg viewBox="0 0 16 16"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg><span class="tag">${esc(p.cat)}</span><b>${esc(name(p))}</b><small>${counts[i]} fichier${counts[i]>1?"s":""}</small></div>`).join("")}</div>`:`<div class="empty">Aucune personne ici pour l’instant.<br>Clique sur « Nouvelle personne » pour créer un dossier.</div>`)+`<div class="foot">Tes données restent enregistrées dans ce navigateur, sur cet appareil.</div>`;
+  $("#main").innerHTML=`<div class="top"><h2>${esc(cat)}</h2><button class="pr" id="np">+ Nouvelle personne</button></div>`+(list.length?`<div class="grid">${list.map((p,i)=>`<div class="card" data-id="${p.id}"><div class="av">${ini(p)}</div><span class="tag">${esc(p.cat)}</span><b>${esc(name(p))}</b><small>${counts[i]} fichier${counts[i]>1?"s":""}</small></div>`).join("")}</div>`:`<div class="empty">Aucune personne ici pour l’instant.<br>Clique sur « Nouvelle personne » pour créer un dossier.</div>`)+`<div class="foot">Tes données restent enregistrées dans ce navigateur, sur cet appareil.</div>`;
   $("#np").onclick=()=>ask("Nouvelle personne",[{id:"prenom",l:"Prénom",req:1},{id:"nom",l:"Nom"},{id:"cat",l:"Catégorie",o:cats,v:cats.includes(cat)?cat:cats[0]}],"Créer",async v=>{await put("people",{id:uid(),prenom:v.prenom,nom:v.nom,cat:v.cat});render()});
   document.querySelectorAll(".card").forEach(e=>e.onclick=()=>{cur=e.dataset.id;render()});
 }
 async function person(){
   const p=people.find(x=>x.id===cur);
   const fs=(await byP(cur)).sort((a,b)=>b.date-a.date);
-  $("#main").innerHTML=`<div class="crumb"><a id="bk">Tous</a> / ${esc(p.cat)} / ${esc(name(p))}</div><div class="top"><h2>${esc(name(p))}</h2><div class="bar"><select id="pc">${cats.map(c=>`<option${c===p.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><button id="rn">Renommer</button><button class="dg" id="dp">Supprimer</button><button class="pr" id="up">+ Photos / vidéos</button></div></div>`+(fs.length?`<div class="grid">${fs.map(f=>{const u=URL.createObjectURL(f.blob);urls.push(u);const v=f.type.startsWith("video");return `<div class="tile" data-id="${f.id}" data-u="${u}" data-v="${v?1:0}">${v?`<video src="${u}#t=0.1" preload="metadata" muted playsinline></video><span class="pl">▶ vidéo</span>`:`<img src="${u}" alt="">`}<button class="x" data-del="${f.id}">×</button></div>`}).join("")}</div>`:`<div class="empty">Ce dossier est vide.<br>Ajoute des photos ou des vidéos.</div>`);
+  $("#main").innerHTML=`<div class="crumb"><a id="bk">Tous</a> / ${esc(p.cat)} / ${esc(name(p))}</div><div class="top"><div class="hd"><div class="av big">${ini(p)}</div><div><h2>${esc(name(p))}</h2><span class="tag">${esc(p.cat)}</span></div></div><div class="bar"><select id="pc">${cats.map(c=>`<option${c===p.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><button id="rn">Renommer</button><button class="dg" id="dp">Supprimer</button><button class="pr" id="up">+ Photos / vidéos</button></div></div><div class="notes"><label class="m" for="nt">Notes</label><textarea id="nt" placeholder="Écris ce que tu veux sur cette personne…">${esc(p.notes||"")}</textarea><small class="m" id="ns"></small></div>`+(fs.length?`<div class="grid">${fs.map(f=>{const u=URL.createObjectURL(f.blob);urls.push(u);const v=f.type.startsWith("video");return `<div class="tile" data-id="${f.id}" data-u="${u}" data-v="${v?1:0}">${v?`<video src="${u}#t=0.1" preload="metadata" muted playsinline></video><span class="pl">▶ vidéo</span>`:`<img src="${u}" alt="">`}<button class="x" data-del="${f.id}">×</button></div>`}).join("")}</div>`:`<div class="empty">Ce dossier est vide.<br>Ajoute des photos ou des vidéos.</div>`);
   $("#bk").onclick=()=>{cur=null;cat="Tous";render()};
   $("#pc").onchange=async e=>{p.cat=e.target.value;await put("people",p);cat=p.cat;render()};
   $("#rn").onclick=()=>ask("Renommer",[{id:"prenom",l:"Prénom",v:p.prenom,req:1},{id:"nom",l:"Nom",v:p.nom}],"Enregistrer",async v=>{p.prenom=v.prenom;p.nom=v.nom;await put("people",p);render()});
   $("#dp").onclick=()=>ask("Supprimer le dossier",[],"Supprimer",async()=>{for(const f of fs)await del("files",f.id);await del("people",p.id);cur=null;render()},`Supprimer « ${esc(name(p))} » et ses ${fs.length} fichier(s) ?`);
   $("#up").onclick=()=>$("#fi").click();
+  $("#nt").oninput=async e=>{$("#ns").textContent="Enregistrement…";p.notes=e.target.value;await put("people",p);$("#ns").textContent="Enregistré ✓"};
   document.querySelectorAll(".tile").forEach(t=>t.onclick=e=>{
     if(e.target.dataset.del){ask("Supprimer ce fichier",[],"Supprimer",async()=>{await del("files",e.target.dataset.del);render()},"Cette action est définitive.");return}
     $("#lb").innerHTML=t.dataset.v==="1"?`<video src="${t.dataset.u}" controls autoplay playsinline></video>`:`<img src="${t.dataset.u}" alt="">`;
@@ -135,6 +168,7 @@ $("#fi").onchange=async e=>{
 };
 $("#q").oninput=e=>{q=e.target.value.toLowerCase();if(!cur)home()};
 $("#th").onclick=()=>{const r=document.documentElement,t=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=t;try{localStorage.setItem("theme",t)}catch(e){}};
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 openDb().then(d=>{db=d;render()}).catch(()=>{$("#main").innerHTML=`<div class="empty">Le stockage du navigateur est indisponible (navigation privée ?). Ouvre la page dans une fenêtre normale.</div>`});
 </script>
 </body>
