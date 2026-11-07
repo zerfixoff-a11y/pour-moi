@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mon Cercle</title>
+<style>
+:root{--bg:#0b0b0b;--bg2:#151515;--bg3:#1f1f1f;--bd:#2c2c2c;--fg:#f2f2f2;--mut:#8d8d8d;--acc:#f2f2f2;--accfg:#0b0b0b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{--bg:#fff;--bg2:#f5f5f5;--bg3:#e9e9e9;--bd:#d2d2d2;--fg:#111;--mut:#666;--acc:#111;--accfg:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0b0b}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg2);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;display:flex;gap:12px;align-items:center;padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--bd)}
+header b{font-size:16px;white-space:nowrap}
+header input{flex:1;max-width:340px;margin-left:auto}
+input,select{background:var(--bg);color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:7px 10px;font:inherit;width:100%}
+input:focus,select:focus{outline:2px solid var(--mut);outline-offset:-1px}
+button{background:var(--bg3);color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:7px 14px;font:inherit;cursor:pointer}
+button:hover{border-color:var(--mut)}
+button.pr{background:var(--acc);color:var(--accfg);border-color:var(--acc);font-weight:600}
+button.dg:hover{color:#fff;background:#555}
+.wrap{display:flex;max-width:1200px;margin:0 auto;padding:20px;gap:24px}
+aside{width:220px;flex:none}
+aside h4{margin:0 0 8px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.cat{display:flex;justify-content:space-between;padding:7px 10px;border-radius:6px;cursor:pointer;color:var(--mut)}
+.cat:hover{background:var(--bg2);color:var(--fg)}
+.cat.on{background:var(--bg3);color:var(--fg);font-weight:600}
+.cat span{font-size:12px}
+.add{margin-top:10px;width:100%;background:none;border-style:dashed;color:var(--mut)}
+main{flex:1;min-width:0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.top h2{margin:0;font-size:20px}
+.crumb{color:var(--mut);font-size:13px;margin-bottom:6px}
+.crumb a{cursor:pointer;color:var(--fg)}.crumb a:hover{text-decoration:underline}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:8px;padding:16px;cursor:pointer}
+.card:hover{border-color:var(--mut);background:var(--bg3)}
+.card svg{width:38px;height:38px;fill:var(--mut);display:block;margin-bottom:10px}
+.card b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card small,.m{color:var(--mut)}
+.tag{display:inline-block;border:1px solid var(--bd);border-radius:20px;padding:0 8px;font-size:11px;color:var(--mut);margin-bottom:6px}
+.tile{position:relative;aspect-ratio:1;background:var(--bg2);border:1px solid var(--bd);border-radius:8px;overflow:hidden;cursor:pointer}
+.tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block}
+.tile .x{position:absolute;top:6px;right:6px;padding:0 8px;line-height:24px;opacity:.9}
+.tile .pl{position:absolute;left:6px;bottom:6px;background:#000a;color:#fff;border-radius:4px;padding:0 6px;font-size:11px}
+.empty{border:1px dashed var(--bd);border-radius:8px;padding:40px;text-align:center;color:var(--mut)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bar select{width:auto}
+dialog{background:var(--bg2);color:var(--fg);border:1px solid var(--bd);border-radius:10px;padding:20px;width:min(380px,92vw)}
+dialog::backdrop{background:#000a}
+dialog h3{margin:0 0 12px}
+dialog label{display:block;margin-bottom:10px;color:var(--mut);font-size:12px}
+dialog label input,dialog label select{margin-top:4px}
+.bt{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+#lb{position:fixed;inset:0;background:#000e;z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+#lb img,#lb video{max-width:100%;max-height:100%;border-radius:6px}
+.foot{margin-top:28px;color:var(--mut);font-size:12px}
+@media(max-width:700px){.wrap{flex-direction:column;padding:14px;gap:14px}aside{width:100%;display:flex;gap:6px;overflow-x:auto;align-items:center}aside h4{display:none}.cat{border:1px solid var(--bd);white-space:nowrap;gap:8px}.add{margin:0;width:auto;white-space:nowrap}}
+</style>
+</head>
+<body>
+<header><b>◼ Mon Cercle</b><input id="q" placeholder="Rechercher une personne…"><button id="th" title="Thème">◐</button></header>
+<div class="wrap"><aside id="side"></aside><main id="main"></main></div>
+<dialog id="dlg"></dialog>
+<div id="lb"></div>
+<input type="file" id="fi" multiple accept="image/*,video/*" hidden>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+let db,people=[],cats=["Famille","Amis","Copine"],cat="Tous",cur=null,q="",urls=[];
+try{const c=JSON.parse(localStorage.getItem("cats"));if(Array.isArray(c))cats=c}catch(e){}
+try{const t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}
+const saveCats=()=>{try{localStorage.setItem("cats",JSON.stringify(cats))}catch(e){}};
+const R=(s,m,f)=>new Promise((res,rej)=>{const r=f(db.transaction(s,m).objectStore(s));r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const all=s=>R(s,"readonly",o=>o.getAll());
+const put=(s,v)=>R(s,"readwrite",o=>o.put(v));
+const del=(s,k)=>R(s,"readwrite",o=>o.delete(k));
+const byP=p=>R("files","readonly",o=>o.index("pid").getAll(p));
+const cnt=p=>R("files","readonly",o=>o.index("pid").count(p));
+function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open("cercle",1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore("people",{keyPath:"id"});d.createObjectStore("files",{keyPath:"id"}).createIndex("pid","pid")};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+
+function ask(title,fields,ok,cb,msg){
+  const d=$("#dlg");
+  d.innerHTML=`<h3>${title}</h3>${msg?`<p class="m">${msg}</p>`:""}`+fields.map(f=>`<label>${f.l}${f.o?`<select id="f_${f.id}">${f.o.map(o=>`<option${o===f.v?" selected":""}>${esc(o)}</option>`).join("")}</select>`:`<input id="f_${f.id}" value="${esc(f.v||"")}">`}</label>`).join("")+`<div class="bt"><button id="no">Annuler</button><button class="pr" id="ok">${ok}</button></div>`;
+  d.showModal();
+  $("#no").onclick=()=>d.close();
+  $("#ok").onclick=()=>{const v={};fields.forEach(f=>v[f.id]=$("#f_"+f.id).value.trim());if(fields.some(f=>f.req&&!v[f.id]))return;d.close();cb(v)};
+  const i=d.querySelector("input");if(i)i.focus();
+}
+const name=p=>`${p.prenom} ${p.nom}`.trim();
+
+async function render(){
+  urls.forEach(u=>URL.revokeObjectURL(u));urls=[];
+  people=await all("people");
+  side();
+  cur&&people.find(p=>p.id===cur)?await person():(cur=null,await home());
+}
+function side(){
+  const n=c=>c==="Tous"?people.length:people.filter(p=>p.cat===c).length;
+  $("#side").innerHTML=`<h4>Catégories</h4>`+["Tous",...cats].map(c=>`<div class="cat${c===cat?" on":""}" data-c="${esc(c)}">${esc(c)}<span>${n(c)}</span></div>`).join("")+`<button class="add" id="ac">+ Catégorie</button>`;
+  document.querySelectorAll(".cat").forEach(e=>e.onclick=()=>{cat=e.dataset.c;cur=null;render()});
+  $("#ac").onclick=()=>ask("Nouvelle catégorie",[{id:"n",l:"Nom",req:1}],"Créer",v=>{if(!cats.includes(v.n)&&v.n!=="Tous"){cats.push(v.n);saveCats()}cat=v.n;cur=null;render()});
+}
+async function home(){
+  const list=people.filter(p=>(cat==="Tous"||p.cat===cat)&&name(p).toLowerCase().includes(q)).sort((a,b)=>name(a).localeCompare(name(b)));
+  const counts=await Promise.all(list.map(p=>cnt(p.id)));
+  $("#main").innerHTML=`<div class="top"><h2>${esc(cat)}</h2><button class="pr" id="np">+ Nouvelle personne</button></div>`+(list.length?`<div class="grid">${list.map((p,i)=>`<div class="card" data-id="${p.id}"><svg viewBox="0 0 16 16"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg><span class="tag">${esc(p.cat)}</span><b>${esc(name(p))}</b><small>${counts[i]} fichier${counts[i]>1?"s":""}</small></div>`).join("")}</div>`:`<div class="empty">Aucune personne ici pour l’instant.<br>Clique sur « Nouvelle personne » pour créer un dossier.</div>`)+`<div class="foot">Tes données restent enregistrées dans ce navigateur, sur cet appareil.</div>`;
+  $("#np").onclick=()=>ask("Nouvelle personne",[{id:"prenom",l:"Prénom",req:1},{id:"nom",l:"Nom"},{id:"cat",l:"Catégorie",o:cats,v:cats.includes(cat)?cat:cats[0]}],"Créer",async v=>{await put("people",{id:uid(),prenom:v.prenom,nom:v.nom,cat:v.cat});render()});
+  document.querySelectorAll(".card").forEach(e=>e.onclick=()=>{cur=e.dataset.id;render()});
+}
+async function person(){
+  const p=people.find(x=>x.id===cur);
+  const fs=(await byP(cur)).sort((a,b)=>b.date-a.date);
+  $("#main").innerHTML=`<div class="crumb"><a id="bk">Tous</a> / ${esc(p.cat)} / ${esc(name(p))}</div><div class="top"><h2>${esc(name(p))}</h2><div class="bar"><select id="pc">${cats.map(c=>`<option${c===p.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><button id="rn">Renommer</button><button class="dg" id="dp">Supprimer</button><button class="pr" id="up">+ Photos / vidéos</button></div></div>`+(fs.length?`<div class="grid">${fs.map(f=>{const u=URL.createObjectURL(f.blob);urls.push(u);const v=f.type.startsWith("video");return `<div class="tile" data-id="${f.id}" data-u="${u}" data-v="${v?1:0}">${v?`<video src="${u}#t=0.1" preload="metadata" muted playsinline></video><span class="pl">▶ vidéo</span>`:`<img src="${u}" alt="">`}<button class="x" data-del="${f.id}">×</button></div>`}).join("")}</div>`:`<div class="empty">Ce dossier est vide.<br>Ajoute des photos ou des vidéos.</div>`);
+  $("#bk").onclick=()=>{cur=null;cat="Tous";render()};
+  $("#pc").onchange=async e=>{p.cat=e.target.value;await put("people",p);cat=p.cat;render()};
+  $("#rn").onclick=()=>ask("Renommer",[{id:"prenom",l:"Prénom",v:p.prenom,req:1},{id:"nom",l:"Nom",v:p.nom}],"Enregistrer",async v=>{p.prenom=v.prenom;p.nom=v.nom;await put("people",p);render()});
+  $("#dp").onclick=()=>ask("Supprimer le dossier",[],"Supprimer",async()=>{for(const f of fs)await del("files",f.id);await del("people",p.id);cur=null;render()},`Supprimer « ${esc(name(p))} » et ses ${fs.length} fichier(s) ?`);
+  $("#up").onclick=()=>$("#fi").click();
+  document.querySelectorAll(".tile").forEach(t=>t.onclick=e=>{
+    if(e.target.dataset.del){ask("Supprimer ce fichier",[],"Supprimer",async()=>{await del("files",e.target.dataset.del);render()},"Cette action est définitive.");return}
+    $("#lb").innerHTML=t.dataset.v==="1"?`<video src="${t.dataset.u}" controls autoplay playsinline></video>`:`<img src="${t.dataset.u}" alt="">`;
+    $("#lb").style.display="flex";
+  });
+}
+$("#lb").onclick=e=>{if(e.target.tagName!=="VIDEO"){$("#lb").style.display="none";$("#lb").innerHTML=""}};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("#lb").style.display="none";$("#lb").innerHTML=""}});
+$("#fi").onchange=async e=>{
+  const fs=[...e.target.files];e.target.value="";
+  for(const f of fs)await put("files",{id:uid(),pid:cur,name:f.name,type:f.type,blob:f,date:Date.now()});
+  render();
+};
+$("#q").oninput=e=>{q=e.target.value.toLowerCase();if(!cur)home()};
+$("#th").onclick=()=>{const r=document.documentElement,t=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=t;try{localStorage.setItem("theme",t)}catch(e){}};
+openDb().then(d=>{db=d;render()}).catch(()=>{$("#main").innerHTML=`<div class="empty">Le stockage du navigateur est indisponible (navigation privée ?). Ouvre la page dans une fenêtre normale.</div>`});
+</script>
+</body>
+</html>
